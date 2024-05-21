@@ -3,82 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="js/index.js"></script> 
+    <!-- Ensure jQuery is loaded before your index.js -->
+    
     <title>Battery Status</title>
     <link rel="stylesheet" href="css/battery.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 </head>
 <body>
-   
-<div class="navbar">
-    <div>
-        <nav class="container">
-            <img src="css/logo.avif" height="50px" width="80px" alt="Logo" class="logo-img">
-            <div class="logo">
-                <a href="#" class="brand"><center>Battery App</center></a>
-            </div>
-        </nav>
-    </div>
-</div>
-
-<p class="batteryLevel">Battery Level: <span id="batteryLevel">Loading...</span></p>
-
-<section class="battery">
-    <div class="battery__card">
-        <div class="battery__data">
-            <p class="battery__text">Battery Level:</p>
-            <h1 class="battery__percentage"></h1>
-            <p class="battery__status">Charging status: <span id="isPlugged"></span></p>
-        </div>
-
-        <div class="battery__pill">
-            <div class="battery__level">
-                <div class="battery__liquid"></div>
-            </div>
+    <div id="batteryLevel">Battery Level: Unknown</div>
+    <div class="navbar">
+        <div>
+            <nav class="container">
+                <img src="css/logo.avif" height="50px" width="80px" alt="Logo" class="logo-img">
+                <div class="logo">
+                    <a href="#" class="brand"><center>Battery App</center></a>
+                </div>
+            </nav>
         </div>
     </div>
-</section>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // This function runs when the DOM content is loaded
-        // You can place your script here if you don't use 'deviceready' event
-    });
+    <p class="batteryLevel">Battery Level: <span id="batteryLevel">Loading...</span></p>
 
-    // Function to update battery status
-    function updateBatteryStatus(status) {
-        console.log("Battery Level: " + status.level + "%");
-        console.log("Is Plugged In: " + (status.isPlugged ? "Yes" : "No"));
+    <section class="battery">
+        <div class="battery__card">
+            <div class="battery__data">
+                <p class="battery__text">Battery Level:</p>
+                <h1 class="battery__percentage"></h1>
+                <p class="battery__status">Charging status: <span id="isPlugged"></span></p>
+                <p>Charging: <span id="isPlugged">Is Plugged: Unknown</span></p>
 
-        // Update battery level display
-        $('#batteryLevel').text(status.level + '%');
-        $('.battery__percentage').text(status.level + '%');
+            </div>
 
-        // Update charging status display
-        $('#isPlugged').text(status.isPlugged ? "Yes" : "No");
+            <div class="battery__pill">
+                <div class="battery__level">
+                    <div class="battery__liquid"></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // Send battery status to server using AJAX
-        $.ajax({
-            url: 'http://192.168.5.39/transfer.php',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                battery_level: status.level,
-                is_plugged: status.isPlugged ? "Yes" : "No"
-            }),
-            success: function(response) {
-                console.log('Battery status sent successfully.');
-            },
-            error: function(xhr, status, error) {
-                console.error('Error sending battery status:', error);
-                console.log('Data sent to server:', JSON.stringify({
+    <script>
+        // Function to update battery status
+        function updateBatteryStatus(status) {
+            console.log("Battery Level: " + status.level + "%");
+            console.log("Is Plugged In: " + (status.isPlugged ? "Yes" : "No"));
+
+            // Update battery level display
+            $('#batteryLevel').text(status.level + '%');
+            $('.battery__percentage').text(status.level + '%');
+
+            // Update charging status display
+            $('#isPlugged').text(status.isPlugged ? "Yes" : "No");
+
+            // Send battery status to server using AJAX
+            $.ajax({
+                url: 'https://192.168.5.235:443/transfer.php', // Update the server URL as needed
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
                     battery_level: status.level,
                     is_plugged: status.isPlugged ? "Yes" : "No"
-                }));
-            }
-        });
-    }
-</script>
+                }),
+                success: function(response) {
+                    console.log('Battery status sent successfully.');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error sending battery status:', error);
+                    console.log('Data sent to server:', JSON.stringify({
+                        battery_level: status.level,
+                        is_plugged: status.isPlugged ? "Yes" : "No"
+                    }));
+                }
+            });
+        }
+    </script>
 
-<script src="js/index.js"></script> <!-- Include your JavaScript file -->
 </body>
 </html>
