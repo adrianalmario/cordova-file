@@ -10,11 +10,11 @@ function onDeviceReady() {
     cordova.plugins.backgroundMode.setDefaults({
         title: 'My App',
         text: 'Running in background',
-        icon: 'icon', // This will look for icon.png in platforms/android/res/drawable
-        color: 'F14F4D', // Hex format like 'F14F4D'
-        resume: true, // The app will come to foreground when tapping on the notification
-        hidden: false, // Make the notification visible
-        bigText: false // Show the big text style (if available)
+        icon: 'icon', 
+        color: 'F14F4D', 
+        resume: true, 
+        hidden: false, 
+        bigText: false 
     });
 
     // Listen for activation of the background mode
@@ -54,7 +54,7 @@ function onDeviceReady() {
                 console.error('Error sending battery status:', error);
             }
         });
-    }, 60000); // 60000 milliseconds = 1 minute
+    }, 60000); //1 minute delay
 
     if (typeof jQuery !== 'undefined') {
         console.log('jQuery is loaded.');

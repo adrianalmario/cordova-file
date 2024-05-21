@@ -8,7 +8,6 @@
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="js/index.js"></script> 
-    <!-- Ensure jQuery is loaded before your index.js -->
     
     <title>Battery Status</title>
     <link rel="stylesheet" href="css/battery.css">
@@ -34,7 +33,6 @@
                 <p class="battery__text">Battery Level:</p>
                 <h1 class="battery__percentage"></h1>
                 <p class="battery__status">Charging status: <span id="isPlugged"></span></p>
-                <p>Charging: <span id="isPlugged">Is Plugged: Unknown</span></p>
 
             </div>
 
@@ -59,9 +57,8 @@
             // Update charging status display
             $('#isPlugged').text(status.isPlugged ? "Yes" : "No");
 
-            // Send battery status to server using AJAX
             $.ajax({
-                url: 'https://192.168.5.235:443/transfer.php', // Update the server URL as needed
+                url: 'https://192.168.5.235:443/transfer.php',
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({

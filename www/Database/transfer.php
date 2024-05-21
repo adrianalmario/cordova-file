@@ -7,10 +7,8 @@ $username = "root";
 $password = "";
 $dbname = "batt_life_db";
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -26,13 +24,12 @@ $data = json_decode($jsonData, true);
 
 // Check if data is not null and contains the expected elements
 if ($data && isset($data['battery_level'])) {
-    $batteryPercentage = intval($data['battery_level']); // Cast to integer for safety
+    $batteryPercentage = intval($data['battery_level']); 
 
-    // Update batt_percentage column with the received battery percentage
     $updateQuery = "UPDATE `status1` SET `battery_status` = ? WHERE `id` = 1";
     $stmt = $conn->prepare($updateQuery);
     if ($stmt) {
-        $stmt->bind_param("i", $batteryPercentage); // Bind parameter to avoid SQL injection
+        $stmt->bind_param("i", $batteryPercentage); 
         $stmt->execute();
 
         echo "Battery percentage updated successfully\n";
@@ -46,7 +43,6 @@ if ($data && isset($data['battery_level'])) {
     } elseif ($batteryPercentage >=95) {
         $onOffValue = 0;
     } else {
-        // No action required for other percentages
         echo "No action required for battery percentage: $batteryPercentage\n";
     }
     
