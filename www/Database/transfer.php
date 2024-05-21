@@ -1,8 +1,11 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "battery_status";
+$dbname = "batt_life_db";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -15,9 +18,6 @@ if ($conn->connect_error) {
 // Retrieve JSON data from POST request
 $jsonData = file_get_contents('php://input');
 
-// Echo the JSON data
-echo $jsonData;
-
 // Log received JSON data
 error_log("Received JSON data: " . $jsonData);
 
@@ -29,36 +29,38 @@ if ($data && isset($data['battery_level'])) {
     $batteryPercentage = intval($data['battery_level']); // Cast to integer for safety
 
     // Update batt_percentage column with the received battery percentage
-    $updateQuery = "UPDATE `status1` SET `batt_percentage` = ? WHERE `id` = 1";
+    $updateQuery = "UPDATE `status1` SET `battery_status` = ? WHERE `id` = 1";
     $stmt = $conn->prepare($updateQuery);
     if ($stmt) {
         $stmt->bind_param("i", $batteryPercentage); // Bind parameter to avoid SQL injection
         $stmt->execute();
 
-        if ($stmt->affected_rows > 0) {
-            echo "Battery percentage updated successfully\n";
-        } else {
-            echo "Error updating battery percentage: " . $stmt->error . "\n";
-        }
+        echo "Battery percentage updated successfully\n";
     } else {
         echo "Error preparing statement: " . $conn->error . "\n";
     }
 
-    // Update on_off column based on batt_percentage value
-    $onOffValue = ($batteryPercentage < 20 || $batteryPercentage == 100) ? 1 : 0;
-    $updateOnOffQuery = "UPDATE `status1` SET `on_off` = ? WHERE `id` = 1";
-    $stmt2 = $conn->prepare($updateOnOffQuery);
-    if ($stmt2) {
-        $stmt2->bind_param("i", $onOffValue);
-        $stmt2->execute();
-
-        if ($stmt2->affected_rows > 0) {
+    // Update on_off column based on battery percentage value
+    if ($batteryPercentage <= 20) {
+        $onOffValue = 1;
+    } elseif ($batteryPercentage >=95) {
+        $onOffValue = 0;
+    } else {
+        // No action required for other percentages
+        echo "No action required for battery percentage: $batteryPercentage\n";
+    }
+    
+    if (isset($onOffValue)) {
+        // Update on_off column
+        $updateOnOffQuery = "UPDATE `status1` SET `on_off` = ? WHERE `id` = 1";
+        $stmt2 = $conn->prepare($updateOnOffQuery);
+        if ($stmt2) {
+            $stmt2->bind_param("i", $onOffValue);
+            $stmt2->execute();
             echo "On/Off value updated successfully\n";
         } else {
-            echo "Error updating On/Off value: " . $stmt2->error . "\n";
+            echo "Error preparing statement: " . $conn->error . "\n";
         }
-    } else {
-        echo "Error preparing statement: " . $conn->error . "\n";
     }
 
     // Close prepared statements
