@@ -33,6 +33,7 @@
                 <p class="battery__text">Battery Level:</p>
                 <h1 class="battery__percentage"></h1>
                 <p class="battery__status">Charging status: <span id="isPlugged"></span></p>
+                <p>Charging: <span id="isPlugged"></span></p>
 
             </div>
 
@@ -45,7 +46,6 @@
     </section>
 
     <script>
-        // Function to update battery status
         function updateBatteryStatus(status) {
             console.log("Battery Level: " + status.level + "%");
             console.log("Is Plugged In: " + (status.isPlugged ? "Yes" : "No"));
@@ -58,7 +58,7 @@
             $('#isPlugged').text(status.isPlugged ? "Yes" : "No");
 
             $.ajax({
-                url: 'https://192.168.5.235:443/transfer.php',
+                url: 'https://192.168.5.235:443/transfer.php', //ipv4:server port/ db connection
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
